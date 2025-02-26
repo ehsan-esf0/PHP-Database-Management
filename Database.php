@@ -92,16 +92,22 @@ class Database
      */
     function createTable($tableName, $columns)
     {
-        $sql = "CREATE TABLE $tableName (";
-        foreach ($columns as $column => $type) {
-            $sql .= "$column $type, ";
-        }
-        $sql = rtrim($sql, ', ');
-        $sql .= ")";
-        $this->conn->exec($sql);
-        echo "Table $tableName created successfully!";
-    }
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
 
+        if (!$result) {
+            $sql = "CREATE TABLE $tableName (";
+            foreach ($columns as $column => $type) {
+                $sql .= "$column $type, ";
+            }
+            $sql = rtrim($sql, ', ');
+            $sql .= ")";
+            $this->conn->exec($sql);
+            echo "Table $tableName created successfully!";
+        } else {
+            echo "Table $tableName already exists!";
+        }
+    }
 
     /**
      * Deletes a table from the database if it exists.
@@ -113,4 +119,27 @@ class Database
         $sql = "DROP TABLE IF EXISTS $tableName";
         $this->conn->exec($sql);
     }
+
+
+    /**
+     * Renames a table in the database.
+     *
+     * @param string $oldTableName The current name of the table.
+     * @param string $newTableName The new name of the table.
+     */
+    function renameTable($oldTableName, $newTableName)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$oldTableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $sql = "RENAME TABLE $oldTableName TO $newTableName";
+            $this->conn->exec($sql);
+            echo "Table $oldTableName renamed to $newTableName successfully!";
+        } else {
+            echo "Table $oldTableName does not exist!";
+        }
+    }
+
+    
 }
