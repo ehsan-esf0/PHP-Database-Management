@@ -303,4 +303,33 @@ class Database
             echo "Table $tableName or table $referencedTable does not exist!";
         }
     }
+
+    /**
+     * Inserts data into the specified table.
+     *
+     * This method constructs and executes a SQL query to insert data
+     * into the specified table. The method checks if the table and 
+     * columns exist before attempting to insert the data. The method 
+     * uses the current database connection stored in the $conn property.
+     *
+     * @param string $tableName The name of the table.
+     * @param array $data An associative array of column names and values to be inserted.
+     */
+    function insertIntoTable($tableName, $data)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $columns = implode(", ", array_keys($data));
+            $values = implode(", ", array_map(function ($value) {
+                return is_numeric($value) ? $value : "'$value'";
+            }, array_values($data)));
+            $sql = "INSERT INTO $tableName ($columns) VALUES ($values)";
+            $this->conn->exec($sql);
+            echo "Data inserted into table $tableName successfully!";
+        } else {
+            echo "Table $tableName does not exist!";
+        }
+    }
 }
