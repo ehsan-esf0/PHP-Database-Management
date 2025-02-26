@@ -42,4 +42,12 @@ class Database
         $this->connect( $host, $dbname, $username, $password );
     }
 
+    // Database construction
+    function databaseConstruction()
+    {
+        $sql = "CREATE DATABASE $this->dbname";
+        $this->conn->exec($sql);
+    }
+
+
 }
