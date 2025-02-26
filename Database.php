@@ -1,6 +1,7 @@
 <?php
 
-class Database {
+class Database
+{
     private $host;
     private $dbname;
     private $username;
@@ -20,7 +21,8 @@ class Database {
      * @param string $username The username for the database connection.
      * @param string $password The password for the database connection.
      */
-    function __construct($host, $dbname, $username, $password) {
+    function __construct($host, $dbname, $username, $password)
+    {
         $this->host = $host;
         $this->dbname = $dbname;
         $this->username = $username;
@@ -39,7 +41,8 @@ class Database {
     /**
      * Establishes a connection to the database.
      */
-    private function connect($host, $dbname, $username, $password) {
+    private function connect($host, $dbname, $username, $password)
+    {
         $this->conn = null;
 
         try {
@@ -58,7 +61,8 @@ class Database {
      * host, username, password, and database name.
      * 
      */
-    private function createDatabase($host, $username, $password, $dbname) {
+    private function createDatabase($host, $username, $password, $dbname)
+    {
         try {
             $conn = new PDO("mysql:host=$host", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -68,5 +72,14 @@ class Database {
         } catch (PDOException $e) {
             echo "Database creation error: " . $e->getMessage();
         }
+    }
+
+    /**
+     * Deletes the current database.
+     */
+    function deleteDatabase()
+    {
+        $sql = "DROP DATABASE $this->dbname";
+        $this->conn->exec($sql);
     }
 }

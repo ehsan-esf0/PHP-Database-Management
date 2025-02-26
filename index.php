@@ -4,4 +4,5 @@
 
 $dataBase = new Database( "localhost" , "dataFtest" , "root" , "");
 
+$dataBase->deleteDatabase();
 
