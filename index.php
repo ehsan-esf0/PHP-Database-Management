@@ -10,4 +10,6 @@ $dataBase = new Database( "localhost" , "dataFtest" , "root" , "");
 
 //$dataBase->addTableColumn("userss" , "name" , "VARCHAR(255)");
 
+$dataBase->deleteTableColumn("userss" , "name");
+
 

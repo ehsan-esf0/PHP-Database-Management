@@ -222,4 +222,31 @@ class Database
             echo "Table $tableName does not exist!";
         }
     }
+
+    /**
+     * Drops a column from the specified table.
+     *
+     * @param string $tableName The name of the table.
+     * @param string $columnName The name of the column to be dropped.
+     */
+    function deleteTableColumn($tableName, $columnName)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $checkColumnSql = "SHOW COLUMNS FROM $tableName LIKE '$columnName'";
+            $columnResult = $this->conn->query($checkColumnSql)->fetch();
+
+            if ($columnResult) {
+                $sql = "ALTER TABLE $tableName DROP COLUMN $columnName";
+                $this->conn->exec($sql);
+                echo "Column $columnName from table $tableName dropped successfully!";
+            } else {
+                echo "Column $columnName does not exist in table $tableName!";
+            }
+        } else {
+            echo "Table $tableName does not exist!";
+        }
+    }
 }
