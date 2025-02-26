@@ -197,4 +197,29 @@ class Database
             echo "Table $tableName does not exist!";
         }
     }
+
+    /**
+     * Adds a new column to the specified table.
+     *
+     * @param string $tableName The name of the table.
+     * @param string $newColumnName The name of the new column to be added.
+     * @param string $definition The column definition (e.g., data type).
+     * @param string $position (optional) The position to add the new column (e.g., 'FIRST' or 'AFTER column_name').
+     */
+    function addTableColumn($tableName, $newColumnName, $definition, $position = '')
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $sql = "ALTER TABLE $tableName ADD COLUMN $newColumnName $definition";
+            if (!empty($position)) {
+                $sql .= " $position";
+            }
+            $this->conn->exec($sql);
+            echo "Column $newColumnName added to table $tableName successfully!";
+        } else {
+            echo "Table $tableName does not exist!";
+        }
+    }
 }
