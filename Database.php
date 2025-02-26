@@ -315,7 +315,7 @@ class Database
      * @param string $tableName The name of the table.
      * @param array $data An associative array of column names and values to be inserted.
      */
-    function insertIntoTable($tableName, $data)
+    function insert_Into_Table($tableName, $data)
     {
         $checkTableSql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($checkTableSql)->fetch();
@@ -330,6 +330,48 @@ class Database
             echo "Data inserted into table $tableName successfully!";
         } else {
             echo "Table $tableName does not exist!";
+        }
+    }
+
+    /**
+     * Selects data from the specified table with conditions, ordering, and limit.
+     *
+     * This method constructs and executes a SQL query to select data
+     * from the specified table with the given conditions, ordering, 
+     * and limit. The method checks if the table and columns exist before 
+     * attempting to select the data. The method uses the current database 
+     * connection stored in the $conn property.
+     *
+     * @param string $tableName The name of the table.
+     * @param array $columns An array of column names to be selected.
+     * @param string $where (optional) The WHERE condition for the query.
+     * @param string $orderBy (optional) The ORDER BY condition for the query.
+     * @param int $limit (optional) The limit for the number of rows to be selected.
+     * @return array The selected data as an array of associative arrays.
+     */
+    function selectFromTable($tableName, $columns, $where = '', $orderBy = '', $limit = 0)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+        if ($result) {
+            $columnsSql = implode(', ', $columns);
+            $sql = "SELECT $columnsSql FROM $tableName";
+
+            if (!empty($where)) {
+                $sql .= " WHERE $where";
+            }
+            if (!empty($orderBy)) {
+                $sql .= " ORDER BY $orderBy";
+            }
+            if ($limit > 0) {
+                $sql .= " LIMIT $limit";
+            }
+            $stmt = $this->conn->query($sql);
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $data;
+        } else {
+            echo "Table $tableName does not exist!";
+            return [];
         }
     }
 }
