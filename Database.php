@@ -79,7 +79,9 @@ class Database
      */
     function deleteDatabase()
     {
-        $sql = "DROP DATABASE $this->dbname";
+        $sql = "DROP DATABASE IF EXISTS $this->dbname";
         $this->conn->exec($sql);
     }
+
+
 }
