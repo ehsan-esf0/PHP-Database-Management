@@ -84,4 +84,21 @@ class Database
     }
 
 
+    /**
+     * Creates a new table in the specified database.
+     *
+     * @param string $tableName The name of the table to be created.
+     * @param array $columns An associative array of column definitions where the key is the column name and the value is the column type.
+     */
+    function createTable($tableName, $columns)
+    {
+        $sql = "CREATE TABLE $tableName (";
+        foreach ($columns as $column => $type) {
+            $sql .= "$column $type, ";
+        }
+        $sql = rtrim($sql, ', ');
+        $sql .= ")";
+        $this->conn->exec($sql);
+        echo "Table $tableName created successfully!";
+    }
 }
