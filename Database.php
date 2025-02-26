@@ -101,4 +101,16 @@ class Database
         $this->conn->exec($sql);
         echo "Table $tableName created successfully!";
     }
+
+
+    /**
+     * Deletes a table from the database if it exists.
+     *
+     * @param string $tableName The name of the table to be deleted.
+     */
+    function deleteTable($tableName)
+    {
+        $sql = "DROP TABLE IF EXISTS $tableName";
+        $this->conn->exec($sql);
+    }
 }
