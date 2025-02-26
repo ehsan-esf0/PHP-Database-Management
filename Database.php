@@ -55,6 +55,33 @@ class Database
     }
 
     /**
+     * Executes a custom SQL query with bindable values.
+     *
+     * This method takes a custom SQL query with placeholders and an associative array of parameters to bind values to the query.
+     * It executes the query and returns the result. The method uses the current database connection stored in the $conn property.
+     *
+     * @param string $query The custom SQL query to be executed.
+     * @param array $params An associative array of parameters to bind to the query.
+     * @return array The result of the query as an array of associative arrays.
+     */
+    function query($query, $params = [])
+    {
+        try {
+            $stmt = $this->conn->prepare($query);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+            $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $data;
+        } catch (PDOException $e) {
+            echo "Query execution error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+
+    /**
      * Creates a new database.
      *
      * This method creates a new database using the provided
