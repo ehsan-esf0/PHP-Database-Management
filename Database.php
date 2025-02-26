@@ -404,5 +404,28 @@ class Database
         }
     }
 
-    
+    /**
+     * Deletes data from the specified table.
+     *
+     * This method constructs and executes a SQL query to delete data
+     * from the specified table with the given conditions. The method checks 
+     * if the table exists before attempting to delete the data. The method 
+     * uses the current database connection stored in the $conn property.
+     *
+     * @param string $tableName The name of the table.
+     * @param string $where The WHERE condition for the query.
+     */
+    function deleteFromTable($tableName, $where)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $sql = "DELETE FROM $tableName WHERE $where";
+            $this->conn->exec($sql);
+            echo "Data from table $tableName deleted successfully!";
+        } else {
+            echo "Table $tableName does not exist!";
+        }
+    }
 }
