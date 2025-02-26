@@ -151,17 +151,14 @@ class Database
      */
     function Change_table_column($TableName, $oldColumnName, $newColumnName, $definition)
     {
-        // Check if the table exists
         $checkTableSql = "SHOW TABLES LIKE '$TableName'";
         $result = $this->conn->query($checkTableSql)->fetch();
 
         if ($result) {
-            // Check if the column exists
             $checkColumnSql = "SHOW COLUMNS FROM $TableName LIKE '$oldColumnName'";
             $columnResult = $this->conn->query($checkColumnSql)->fetch();
 
             if ($columnResult) {
-                // Change the column if it exists
                 $sql = "ALTER TABLE $TableName CHANGE COLUMN $oldColumnName $newColumnName $definition;";
                 $this->conn->exec($sql);
                 echo "Column $oldColumnName in table $TableName renamed to $newColumnName successfully!";
@@ -170,6 +167,34 @@ class Database
             }
         } else {
             echo "Table $TableName does not exist!";
+        }
+    }
+
+    /**
+     * Modifies a column in the specified table.
+     *
+     * @param string $tableName The name of the table.
+     * @param string $columnName The name of the column to be modified.
+     * @param string $definition The new column definition (e.g., data type).
+     */
+    function Modify_table_column($tableName, $columnName, $definition)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $checkColumnSql = "SHOW COLUMNS FROM $tableName LIKE '$columnName'";
+            $columnResult = $this->conn->query($checkColumnSql)->fetch();
+
+            if ($columnResult) {
+                $sql = "ALTER TABLE $tableName MODIFY COLUMN $columnName $definition";
+                $this->conn->exec($sql);
+                echo "Column $columnName in table $tableName modified successfully!";
+            } else {
+                echo "Column $columnName does not exist in table $tableName!";
+            }
+        } else {
+            echo "Table $tableName does not exist!";
         }
     }
 }
