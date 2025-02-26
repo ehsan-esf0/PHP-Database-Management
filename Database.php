@@ -349,7 +349,7 @@ class Database
      * @param int $limit (optional) The limit for the number of rows to be selected.
      * @return array The selected data as an array of associative arrays.
      */
-    function selectFromTable($tableName, $columns, $where = '', $orderBy = '', $limit = 0)
+    function select_From_Table($tableName, $columns, $where = '', $orderBy = '', $limit = 0)
     {
         $checkTableSql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($checkTableSql)->fetch();
@@ -374,4 +374,35 @@ class Database
             return [];
         }
     }
+
+    /**
+     * Updates data in the specified table.
+     *
+     * This method constructs and executes a SQL query to update data
+     * in the specified table with the given conditions. The method checks 
+     * if the table and columns exist before attempting to update the data.
+     * The method uses the current database connection stored in the $conn property.
+     *
+     * @param string $tableName The name of the table.
+     * @param array $data An associative array of column names and new values to be updated.
+     * @param string $where The WHERE condition for the query.
+     */
+    function update_Table($tableName, $data, $where)
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            $set = implode(", ", array_map(function ($column, $value) {
+                return is_numeric($value) ? "$column = $value" : "$column = '$value'";
+            }, array_keys($data), array_values($data)));
+            $sql = "UPDATE $tableName SET $set WHERE $where";
+            $this->conn->exec($sql);
+            echo "Data in table $tableName updated successfully!";
+        } else {
+            echo "Table $tableName does not exist!";
+        }
+    }
+
+    
 }
