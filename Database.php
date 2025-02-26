@@ -141,5 +141,35 @@ class Database
         }
     }
 
-    
+    /**
+     * Changes a column in the specified table.
+     *
+     * @param string $TableName The name of the table.
+     * @param string $oldColumnName The current name of the column.
+     * @param string $newColumnName The new name of the column.
+     * @param string $definition The column definition (e.g., data type).
+     */
+    function Change_table_column($TableName, $oldColumnName, $newColumnName, $definition)
+    {
+        // Check if the table exists
+        $checkTableSql = "SHOW TABLES LIKE '$TableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        if ($result) {
+            // Check if the column exists
+            $checkColumnSql = "SHOW COLUMNS FROM $TableName LIKE '$oldColumnName'";
+            $columnResult = $this->conn->query($checkColumnSql)->fetch();
+
+            if ($columnResult) {
+                // Change the column if it exists
+                $sql = "ALTER TABLE $TableName CHANGE COLUMN $oldColumnName $newColumnName $definition;";
+                $this->conn->exec($sql);
+                echo "Column $oldColumnName in table $TableName renamed to $newColumnName successfully!";
+            } else {
+                echo "Column $oldColumnName does not exist in table $TableName!";
+            }
+        } else {
+            echo "Table $TableName does not exist!";
+        }
+    }
 }
