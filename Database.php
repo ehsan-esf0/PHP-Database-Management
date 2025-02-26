@@ -249,4 +249,58 @@ class Database
             echo "Table $tableName does not exist!";
         }
     }
+
+    /**
+     * Adds a foreign key to the specified table.
+     *
+     * This method constructs and executes a SQL query to add a foreign key
+     * to the specified table. The method checks if the tables and columns 
+     * involved in the foreign key constraint exist before attempting to 
+     * add the foreign key. The method uses the current database connection
+     * stored in the $conn property. Additionally, it supports options 
+     * such as ON DELETE and ON UPDATE.
+     *
+     * @param string $tableName The name of the table to which the foreign key is added.
+     * @param string $columnName The name of the column in the table that is the foreign key.
+     * @param string $referencedTable The name of the referenced table.
+     * @param string $referencedColumn The name of the column in the referenced table.
+     * @param string $constraintName (optional) The name of the foreign key constraint.
+     * @param string $onDelete (optional) The action to be taken on delete (e.g., 'CASCADE', 'SET NULL').
+     * @param string $onUpdate (optional) The action to be taken on update (e.g., 'CASCADE', 'SET NULL').
+     */
+    function addForeignKey($tableName, $columnName, $referencedTable, $referencedColumn, $constraintName = '', $onDelete = '', $onUpdate = '')
+    {
+        $checkTableSql = "SHOW TABLES LIKE '$tableName'";
+        $result = $this->conn->query($checkTableSql)->fetch();
+
+        $checkReferencedTableSql = "SHOW TABLES LIKE '$referencedTable'";
+        $referencedTableResult = $this->conn->query($checkReferencedTableSql)->fetch();
+
+        if ($result && $referencedTableResult) {
+            $checkColumnSql = "SHOW COLUMNS FROM $tableName LIKE '$columnName'";
+            $columnResult = $this->conn->query($checkColumnSql)->fetch();
+
+            $checkReferencedColumnSql = "SHOW COLUMNS FROM $referencedTable LIKE '$referencedColumn'";
+            $referencedColumnResult = $this->conn->query($checkReferencedColumnSql)->fetch();
+
+            if ($columnResult && $referencedColumnResult) {
+                $constraintNameSql = $constraintName ? "CONSTRAINT $constraintName" : '';
+                $sql = "ALTER TABLE $tableName ADD $constraintNameSql FOREIGN KEY ($columnName) REFERENCES $referencedTable($referencedColumn)";
+
+                if (!empty($onDelete)) {
+                    $sql .= " ON DELETE $onDelete";
+                }
+                if (!empty($onUpdate)) {
+                    $sql .= " ON UPDATE $onUpdate";
+                }
+
+                $this->conn->exec($sql);
+                echo "Foreign key added to column $columnName in table $tableName successfully!";
+            } else {
+                echo "Column $columnName in table $tableName or column $referencedColumn in table $referencedTable does not exist!";
+            }
+        } else {
+            echo "Table $tableName or table $referencedTable does not exist!";
+        }
+    }
 }
